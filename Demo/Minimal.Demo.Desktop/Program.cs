@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Xilium.CefGlue;
 using MiniPipeline.CefGlue;
+using MiniPipeline.Core;
 
 namespace Minimal.BrowserUI.Desktop;
 
@@ -34,6 +35,10 @@ class Program
         Directory.CreateDirectory(rootCachePath);
         Directory.CreateDirectory(cachePath);
 
+        //default app://local
+        PipelineCefConfig.Scheme = "https";
+        PipelineCefConfig.Host =    "localhost";
+
         var  app = StartUp.BuildBlazorWebAssembly();
 
         AppDomain.CurrentDomain.ProcessExit += delegate { 
@@ -48,7 +53,7 @@ class Program
             WindowlessRenderingEnabled = false,
             PersistSessionCookies = true,
             LocalesDirPath = Path.Combine(AppContext.BaseDirectory, @"runtimes\win-x64\native\locales"),
-            CookieableSchemesList = "https"
+            CookieableSchemesList = PipelineCefConfig.Scheme
              
         };        
 

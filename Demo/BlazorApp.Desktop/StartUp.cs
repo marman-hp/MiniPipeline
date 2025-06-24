@@ -30,7 +30,7 @@ namespace BlazorApp.Desktop
             builder.Services.Configure<PipelineSocketOptions>(config =>
             {
                 config.UseSsl = true;
-                config.PfxPath = @"D:\localhost.pfx"; 
+                config.PfxPath = @"yourpfxfile"; 
                 config.Password = "1234";
             }).AddSocketPipeline();
 

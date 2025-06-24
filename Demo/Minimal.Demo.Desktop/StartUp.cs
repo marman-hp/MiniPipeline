@@ -26,7 +26,7 @@ namespace Minimal.BrowserUI.Desktop
             builder.Services.Configure<PipelineSocketOptions>(config =>
             {
                 config.UseSsl = true;
-                config.PfxPath = @"D:\localhost.pfx"; // atau null biar autodetect
+                config.PfxPath = @"yourpfxfile";
                 config.Password = "1234";
             }).AddSocketPipeline();
 
@@ -143,7 +143,7 @@ namespace Minimal.BrowserUI.Desktop
             builder.Services.Configure<PipelineSocketOptions>(config =>
             {
                 config.UseSsl = true;
-                config.PfxPath = @"D:\localhost.pfx";
+                config.PfxPath = @"yourpfxfile";
                 config.Password = "1234";
             }).AddSocketPipeline();
 
