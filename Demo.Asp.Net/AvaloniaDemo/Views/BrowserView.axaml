@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AvaloniaDemo.ViewModels"
+			 xmlns:avalonia="clr-namespace:Avalonia;assembly=Avalonia.Base"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:ico="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:local="clr-namespace:AvaloniaDemo.Converter;assembly=AvaloniaDemo"
+			 xmlns:behaviors="clr-namespace:AvaloniaDemo.Behaviors;assembly=AvaloniaDemo"
+             x:Class="AvaloniaDemo.Views.BrowserView"
+             x:DataType="vm:BrowserViewModel">
+	<UserControl.Resources>
+		<local:BusyToIconKindConverter x:Key="BusyToIconKindConverter" />
+	</UserControl.Resources>	
+	<Grid Background="#F5F8FD" >
+		<Grid.RowDefinitions>
+			<RowDefinition Height="32" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<DockPanel  HorizontalAlignment="Stretch" Grid.Row="0" Margin="0" Background="Transparent">
+			<Button CornerRadius="0" 
+					IsEnabled="{Binding CanGoBack}" 
+					Command="{Binding GoBack}"
+					Classes="flat">
+				
+				<ico:MaterialIcon Kind="ArrowLeft" />
+			</Button>
+			<Button CornerRadius="0"
+					IsEnabled="{Binding CanGoForward}"
+					Command="{Binding GoForward}"
+					Classes="flat" >
+				<ico:MaterialIcon Kind="ArrowRight" />
+			</Button>
+			<Button  Width="34"  CornerRadius="0" 
+					 Command="{Binding ReloadOrStop}"
+				      Classes="flat" >
+				<ico:MaterialIcon Kind="{Binding IsBusy, Converter={StaticResource BusyToIconKindConverter}}" />
+			</Button>
+
+			<TextBox x:Name="addressTextBox" Text="{Binding Url, Mode=TwoWay}" 
+                     behaviors:EventToCommandBehavior.EventName="KeyDown"
+                     behaviors:EventToCommandBehavior.Command="{Binding TextBoxKeyDownCommand}"					 
+					 HorizontalAlignment="Stretch"  Background="#E0E0E0" BorderBrush="#D1D1D6" BorderThickness="0" />
+		</DockPanel>
+		<!-- CefBrowser Container -->
+		<Grid Grid.Row="1" >
+			<Grid.RowDefinitions>
+				<!-- Progressbar -->
+				<RowDefinition Height="Auto"/>
+				<!-- Browser  -->
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			<ProgressBar x:Name="busyIndicator" Grid.Row="0"
+						 Height="1"
+						 IsIndeterminate="True"
+						 Foreground="#0078D4"
+						 Background="Transparent"
+						   Effect=""
+						 avalonia:Visual.IsVisible="{Binding IsBusy}"
+                         >
+			</ProgressBar>
+			<Decorator Grid.Row="1" Name="browserWrapper" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		</Grid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,12 @@
+﻿@page
+@model RazorAddonViews.Pages.Test.AuthPageModel
+@{
+}
+
+
+<div class="d-flex vh-100 justify-content-center align-items-center bg-light">
+    <div class="text-center">
+        <h3 class="display-4">Welcome USER @this.User.Identity.Name</h3>
+         <a asp-page="/Test/Logout">Logout</a> 
+    </div>
+</div>

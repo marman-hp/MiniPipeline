@@ -1,0 +1,13 @@
+﻿<CascadingAuthenticationState>
+<Router AppAssembly="typeof(BlazorApp.Desktop.Components.App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+            <LayoutView Layout="@typeof(BlazorApp.Desktop.Components.Layout.MainLayout)">
+                <p>😢 Sorry, that page could not be found.</p>
+            </LayoutView>
+    </NotFound>
+</Router>
+</CascadingAuthenticationState>

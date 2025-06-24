@@ -1,0 +1,42 @@
+﻿@page "/upload"
+@inject IAntiforgery Antiforgery
+@inject IHttpContextAccessor HttpContextAccessor
+
+@code {
+    private string? token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var tokens = Antiforgery.GetAndStoreTokens(HttpContextAccessor.HttpContext);
+        token = tokens.RequestToken;
+    }
+}
+
+<h3>Upload Page using  controller</h3>
+
+<!-- Success message -->
+<div id="uploadMessage"></div>
+
+<form method="post" action="/uploadfile" enctype="multipart/form-data" class="p-3 border rounded shadow-sm bg-light" @formname="uploadform">
+    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+    <div class="mb-3">
+        <label for="fileInput" class="form-label">Choose file to upload</label>
+        <input class="form-control" type="file" id="fileInput" name="file" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+
+<script>
+    (() => {
+        const paramspage = new URLSearchParams(window.location.search);
+        if (paramspage.get("success") === "1") {
+            const filename = paramspage.get("filename") || "file";
+            document.getElementById("uploadMessage").innerHTML =
+                `<div class="alert alert-success">✅ <strong>${filename}</strong> uploaded successfully.</div>`;
+        } else if (paramspage.get("success") === "0") {
+            document.getElementById("uploadMessage").innerHTML =
+                `<div class="alert alert-danger">❌ Upload failed. Please select a file.</div>`;
+        }
+    })();
+</script>

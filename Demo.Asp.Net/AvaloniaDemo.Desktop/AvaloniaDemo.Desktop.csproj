@@ -1,0 +1,74 @@
+﻿<!-- Using Sdk="Microsoft.NET.Sdk.Razor" for ignoring console windows on start-up  -->
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
+    One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		
+		<!-- NEED TO SETUP THIS AddRazorSupportForMvc True -->
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>	
+		
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<RuntimeIdentifiers>win-x64;osx-x64</RuntimeIdentifiers>
+
+		<!-- bypass error NETSDK1152 -->
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+		<AssemblyName>AvaloniaDemo.Desktop</AssemblyName>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug_WindowlessRender'">
+		<DefineConstants>$(DefineConstants);WINDOWLESS</DefineConstants>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<CFBundleName>AvaloniaDemo.Desktop</CFBundleName>
+		<!-- Also defines .app file name -->
+		<CFBundleDisplayName>CefGlueAvaloniaDemo</CFBundleDisplayName>
+		<CFBundleIdentifier>com.example</CFBundleIdentifier>
+		<CFBundleVersion>1.0.0</CFBundleVersion>
+		<CFBundlePackageType>AAPL</CFBundlePackageType>
+		<CFBundleSignature>4242</CFBundleSignature>
+		<CFBundleShortVersionString>AvaloniaDemo</CFBundleShortVersionString>
+		<CFBundleExecutable>AvaloniaDemo.Desktop</CFBundleExecutable>
+		<CFBundleIconFile>AppName.icns</CFBundleIconFile>
+		<!-- Will be copied from output directory -->
+		<NSPrincipalClass>NSApplication</NSPrincipalClass>
+		<NSHighResolutionCapable>true</NSHighResolutionCapable>
+	</PropertyGroup>	
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
+		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
+		<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\MiniPipeline.CefGlue\MiniPipeline.CefGlue.csproj" />
+		<ProjectReference Include="..\..\MiniPipeline.Extensions\MiniPipeline.Extensions.csproj" />
+		<ProjectReference Include="..\..\MiniPipeline\MiniPipeline.Core.csproj" />
+		<ProjectReference Include="..\AvaloniaDemo\AvaloniaDemo.csproj" />
+		<ProjectReference Include="..\RazorAddonViews\RazorAddonViews.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\uploads\" />
+	</ItemGroup>
+
+    <!-- 
+    <Target Name="CopyWebAssetsAfterBuild" AfterTargets="Build">
+			<ItemGroup>
+				<wwwrootFilesToOutput Include="wwwroot/**/*" />
+			</ItemGroup>
+			<Copy SourceFiles="@(wwwrootFilesToOutput)" DestinationFolder="$(OutputPath)wwwroot\%(RecursiveDir)" SkipUnchangedFiles="true" />
+	</Target>-->
+
+	<Target Name="CopyWebAssetsAfterPublish" AfterTargets="Publish">
+		<ItemGroup>
+			<wwwrootFilesToPublish Include="$(ProjectDir)wwwroot\**\*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(wwwrootFilesToPublish)" DestinationFolder="$(PublishDir)wwwroot\%(wwwrootFilesToPublish.RecursiveDir)" SkipUnchangedFiles="true" />
+	</Target>
+</Project>

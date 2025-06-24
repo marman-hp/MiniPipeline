@@ -1,0 +1,93 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:ico="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		>
+
+	<!-- Style  -->
+	<Style Selector="Button.flat">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="CornerRadius" Value="0"/>
+		<Setter Property="FontSize" Value="14"/>
+	</Style>
+
+	<Style Selector="RepeatButton.flat">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="CornerRadius" Value="0"/>
+		<Setter Property="FontSize" Value="14"/>
+	</Style>
+
+		<!-- State hover -->
+		<Style Selector="Button.flat:pointerover">
+			<Setter Property="Background" Value="#22000000"/>
+		</Style>
+
+		<!-- State Press -->
+		<Style Selector="Button.flat:pressed">
+			<Setter Property="Background" Value="#33000000"/>
+		</Style>
+
+
+
+
+	<Style Selector="TabControl.horizontalScroller">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						Background="{TemplateBinding Background}"
+						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalAlignment}">
+					<DockPanel>
+						<Grid DockPanel.Dock="Top" 
+							  VerticalAlignment="Center"
+							  Background="#F5F8FD">
+
+							<ScrollViewer  Name="PART_TabScrollViewer" DockPanel.Dock="{TemplateBinding TabStripPlacement}" 
+										   Background="Transparent"
+									  HorizontalAlignment="Stretch"
+									  HorizontalScrollBarVisibility="Hidden" >
+								<StackPanel  Orientation="Horizontal" >
+							          <ItemsPresenter Name="PART_ItemsPresenter" 
+											ItemsPanel="{TemplateBinding ItemsPanel}" />
+									<Button Name="PART_PlusButton"
+											DockPanel.Dock="Right"
+											Classes="flat" >
+										<ico:MaterialIcon Kind="Plus" />
+									</Button>
+								</StackPanel>
+							</ScrollViewer >
+						</Grid>
+						<ContentPresenter Name="PART_SelectedContentHost"
+										  Margin="{TemplateBinding Padding}"
+										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+										  Content="{TemplateBinding SelectedContent}"
+										  ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+					</DockPanel>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<Style Selector="TabItem > Border > Panel">
+		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<Style Selector="TabItem">
+		<Setter Property="Padding" Value="3 0 3 0"  />
+		<Setter Property="Height" Value="32"  />
+		<Setter Property="MinHeight" Value="32"  />
+		<Setter Property="FontWeight" Value="Medium"  />
+		<Setter Property="FontSize" Value="14"  />
+		
+	</Style>
+     
+
+</Styles>

@@ -1,0 +1,32 @@
+﻿@page
+@model RazorAddonViews.Pages.Test.FileResultPageModel
+@{
+}
+
+<div class="container mt-5">
+    <h2>Upload Result</h2>
+    <p><strong>Description:</strong> @Model.Description</p>
+
+    <h4>Uploaded Files</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Size (KB)</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model.Files)
+            {
+                <tr>
+                    <td>@file.FileName</td>
+                    <td>@((file.Size / 1024.0).ToString("F2"))</td>
+                    <td>
+                        <a href="@Url.Page("FileUploadResult", "DownloadFile", new { fileName = file.FileName })" class="btn btn-primary">Download</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

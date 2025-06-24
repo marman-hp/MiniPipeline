@@ -1,0 +1,20 @@
+﻿@page "/auth"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager Navigation
+
+<h3>Home</h3>
+<p>Authentication using cookies</p>
+<AuthorizeView>
+    <Authorized>
+        <p>Welcome, <b>@context.User.Identity?.Name</b>!</p>
+        <form action="/logout" method="post" @formname="LogoutForm">
+            <button class="btn btn-light" type="submit">Logout</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not logged in.</p>
+        <a href="/login">Login</a>
+    </NotAuthorized>
+</AuthorizeView>
+

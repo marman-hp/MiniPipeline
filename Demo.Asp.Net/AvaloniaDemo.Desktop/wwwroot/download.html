@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Download Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+
+        .item {
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <h2>Download Manager</h2>
+    <div id="downloads"></div>
+    <script>
+        window.updateDownloads = function (list) {
+            const container = document.getElementById('downloads');
+            container.innerHTML = '';
+            list.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'item';
+                el.innerHTML = `
+                        <strong>${d.file}</strong><br/>
+                        Status: ${d.status}<br/>
+                        <div class="progress-bar"><div class="progress" style="width:${d.progress}%;"></div></div>
+                        <small>${d.received} / ${d.total} bytes (${d.progress}%)</small>
+                    `;
+                container.appendChild(el);
+            });
+        };
+    </script>
+</body>
+</html>

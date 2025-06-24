@@ -1,0 +1,20 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject IAntiforgery Antiforgery
+@inject IHttpContextAccessor HttpContextAccessor
+<h3>Login Page</h3>
+@code {
+    private string? token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var tokens = Antiforgery.GetAndStoreTokens(HttpContextAccessor.HttpContext);
+        token = tokens.RequestToken;
+    }
+}
+
+<form action="/processlogin" method="post" @formname="LoginForm">
+    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+    <input name="username" placeholder="Enter username" />
+    <button class="btn btn-primary" type="submit">Login</button>
+</form>

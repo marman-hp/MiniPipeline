@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		xmlns:cvt="clr-namespace:AvaloniaDemo.Converter;assembly=AvaloniaDemo"
+        xmlns:vm="clr-namespace:AvaloniaDemo.ViewModels"
+        x:Class="AvaloniaDemo.DownloadManagerWindow"
+        Title="DownloadManagerWindow">
+	<Window.Resources>
+		<cvt:ZeroToVisibleConverter x:Key="ZeroToVisibleConverter"/>
+	</Window.Resources>
+	<Grid>
+	<DataGrid ItemsSource="{Binding DownloadItems}" IsReadOnly="True" ColumnWidth="Auto" HorizontalAlignment="Stretch">
+		<DataGrid.Columns>
+			<DataGridTemplateColumn Header="Url" >
+				<DataGridTemplateColumn.CellTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Url}" TextTrimming="CharacterEllipsis" MaxWidth="300"	VerticalAlignment="Center"  ToolTip.Tip="{Binding Url}"/>
+					</DataTemplate>
+				</DataGridTemplateColumn.CellTemplate>
+			</DataGridTemplateColumn>
+			<DataGridTextColumn Header="File Name" Binding="{Binding FileName}"  />
+			<DataGridTemplateColumn  Header="Progress">
+				<DataGridTemplateColumn.CellTemplate>
+					<DataTemplate>
+						<ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" Height="20" VerticalAlignment="Center"/>						
+					</DataTemplate>
+				</DataGridTemplateColumn.CellTemplate>				
+			</DataGridTemplateColumn >
+			<DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+		</DataGrid.Columns>
+	</DataGrid>
+	<TextBlock Text="No downloads yet."
+	           IsVisible="{Binding !DownloadItems.Count}"
+	           HorizontalAlignment="Center"
+	           VerticalAlignment="Center"
+	           FontSize="16"
+	           Foreground="Gray"/>
+	</Grid>
+</Window>
