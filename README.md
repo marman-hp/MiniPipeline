@@ -18,6 +18,8 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
 
 ---
 
+![Alt Text](20250628122359.gif)
+
 
 ## Limitation
 - **Project Template**  
@@ -63,10 +65,9 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
   app.UseSignalR()
   app.MapHub<YourHub>("/hub");
   ```  
-  <pre><code>
-    ```text[CEF Browser Host]||-- HTTP Request --> [MiniPipeline Listener]||-- If WS Upgrade --> [TCP Listener (RFC 6455 Handshake)]|                          ||                          |-- Validate Headers & Path|                          |-- Intercept & Authorize|                          ||                    [IHttpUpgradeFeature.UpgradeAsync()]|                          ||                    ←-- Raw Stream (duplex)||--> [HttpContext Pipeline]||-- UseWebSockets Middleware|-- SignalR / Blazor Dispatch|[User-Defined RequestDelegate / Addons]
-    ```
-   </code></pre>
+
+```mermaid flowchart TD A[CEF Browser Host] A -->|HTTP Request| B[MiniPipeline Listener] B -->|If WebSocket Upgrade| C[TCP Listener (RFC 6455 Handshake)] C --> D[Validate Headers & Path] D --> E[Intercept & Authorize] E --> F[IHttpUpgradeFeature.UpgradeAsync()] F --> G[⬅️ Duplex Raw Stream] G --> H[HttpContext Pipeline] H --> I[UseWebSockets Middleware] I --> J[SignalR / Blazor Dispatch] J --> K[User-Defined RequestDelegate / Addons] ``` 
+
 
 - **The Blazor Support [<span style="color:red">EXPERIMENTAL</span>]**  
    Only tested with blazor  .NET 8.  
