@@ -66,7 +66,6 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
   app.MapHub<YourHub>("/hub");
   ```  
 
-```mermaid flowchart TD A[CEF Browser Host] A -->|HTTP Request| B[MiniPipeline Listener] B -->|If WebSocket Upgrade| C[TCP Listener (RFC 6455 Handshake)] C --> D[Validate Headers & Path] D --> E[Intercept & Authorize] E --> F[IHttpUpgradeFeature.UpgradeAsync()] F --> G[⬅️ Duplex Raw Stream] G --> H[HttpContext Pipeline] H --> I[UseWebSockets Middleware] I --> J[SignalR / Blazor Dispatch] J --> K[User-Defined RequestDelegate / Addons] ``` 
 
 
 - **The Blazor Support [<span style="color:red">EXPERIMENTAL</span>]**  
