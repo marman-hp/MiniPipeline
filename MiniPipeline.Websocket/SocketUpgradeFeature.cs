@@ -42,7 +42,7 @@ namespace MiniPipeline.WebSocket
                 }
             }
 
-             var subProtocol = _context.Response.Headers["Sec-WebSocket-Protocol"].ToString();
+            //var subProtocol = _context.Response.Headers["Sec-WebSocket-Protocol"].ToString();
 
 
 

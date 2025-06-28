@@ -62,7 +62,11 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
   //for standard signalr
   app.UseSignalR()
   app.MapHub<YourHub>("/hub");
-  ```
+  ```  
+  <pre><code>
+    ```text[CEF Browser Host]||-- HTTP Request --> [MiniPipeline Listener]||-- If WS Upgrade --> [TCP Listener (RFC 6455 Handshake)]|                          ||                          |-- Validate Headers & Path|                          |-- Intercept & Authorize|                          ||                    [IHttpUpgradeFeature.UpgradeAsync()]|                          ||                    ←-- Raw Stream (duplex)||--> [HttpContext Pipeline]||-- UseWebSockets Middleware|-- SignalR / Blazor Dispatch|[User-Defined RequestDelegate / Addons]
+    ```
+   </code></pre>
 
 - **The Blazor Support [<span style="color:red">EXPERIMENTAL</span>]**  
    Only tested with blazor  .NET 8.  

@@ -66,10 +66,10 @@ namespace AvaloniaDemo.Views
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            viewModel.IsBusy = e.IsLoading;  // Mengubah status IsBusy pada ViewModel
+                            viewModel.IsBusy = e.IsLoading;  
                             if (!e.IsLoading)
                             {
-                                viewModel.Progress = 0;  // Reset progress bar jika loading selesai
+                                viewModel.Progress = 0;  
                             }
                         });
                     };
