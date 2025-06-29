@@ -21,7 +21,7 @@
     <input type="hidden" name="__RequestVerificationToken" value="@token" />
     <div class="mb-3">
         <label for="fileInput" class="form-label">Choose file to upload</label>
-        <input class="form-control" type="file" id="fileInput" name="file" />
+        <input class="form-control" type="file" id="fileInput" name="file" required />
     </div>
     <button type="submit" class="btn btn-primary">Upload</button>
 </form>
@@ -33,10 +33,10 @@
         if (paramspage.get("success") === "1") {
             const filename = paramspage.get("filename") || "file";
             document.getElementById("uploadMessage").innerHTML =
-                `<div class="alert alert-success">✅ <strong>${filename}</strong> uploaded successfully.</div>`;
+                `<div class="alert alert-success"><strong>${filename}</strong> uploaded successfully.</div>`;
         } else if (paramspage.get("success") === "0") {
             document.getElementById("uploadMessage").innerHTML =
-                `<div class="alert alert-danger">❌ Upload failed. Please select a file.</div>`;
+                `<div class="alert alert-danger">Upload failed. Please select a file.</div>`;
         }
     })();
 </script>
