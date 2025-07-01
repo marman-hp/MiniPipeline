@@ -92,7 +92,9 @@ namespace MiniPipeline.Core
         private bool IsNeedDisposal(HttpContext context)
         {
            if (Store.Get<bool>("__isblazor")) {
-                if(context!=null && context.Request.Path.Equals("/")) {
+                if(  context!=null &&
+                     PipelineCefConfig.UseBlazorLongPollingTransport &&
+                     (context.Request.Path.Equals("/") || context.Request.Path.Equals("/_blazor") )  ) {
                     return false;
                 }
            }

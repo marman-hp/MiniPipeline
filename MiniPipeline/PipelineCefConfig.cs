@@ -16,6 +16,8 @@ namespace MiniPipeline.Core
         public static string BaseAddress => baseAddress;
 
         public static string wwwrootFolder => wwwrootfolder;
+
+        public static bool UseBlazorLongPollingTransport { get; set; } = false; 
     }
 
 }

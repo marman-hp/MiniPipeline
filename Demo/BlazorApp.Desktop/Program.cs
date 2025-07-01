@@ -35,6 +35,10 @@ namespace BlazorApp.Desktop
         Directory.CreateDirectory(rootCachePath);
         Directory.CreateDirectory(cachePath);
 
+        //set true if run blazor with long polling transport, deafault is false, use web socket transport
+        //PipelineCefConfig.UseBlazorLongPollingTransport =true; 
+
+
 
         var  app = StartUp.BuildBlazorWebApp();
 

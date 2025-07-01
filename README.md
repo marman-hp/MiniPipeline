@@ -22,6 +22,22 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
  **Blazor server Demo**
 ![Blazor Server/App demo](blazor-web-app-svr.gif)
 
+
+## How About Running Blazor Without WebSocket?
+
+Starting from **RC1**, MiniPipeline now supports **longPolling** transport for Blazor Server.
+
+
+If you don't want to use WebSocket, simply **skip calling** `AddSocketPipeline()`.  
+This will cause the SignalR transport to **fall back to longPolling** automatically.
+with longpolling transport you can use custome scheme (`yourscheme://yourhost`).
+
+To explicitly enable it in Avalonia, set this flag at your program entry point:
+
+```csharp
+PipelineCefConfig.UseBlazorLongPollingTransport = true;
+```
+
 ## Limitation
 - **Project Template**  
   No official template yet.  
@@ -95,7 +111,8 @@ var builder = MiniPipelineBuilder.CreateBuilder();
 
 
 // If using WebSocket:
-// Blazor web app/server need websocket, it should be enabled
+// Blazor web app/server default need websocket, it should be enabled
+// with RC1 now you can skip this if you don't need to work with websocket 
 
 //this only for websocket handshake 
 // builder.Services.Configure<PipelineSocketOptions>(config =>
