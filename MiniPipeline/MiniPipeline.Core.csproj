@@ -4,10 +4,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0-rc1</Version>
-	<AssemblyVersion>1.0.0.0</AssemblyVersion>
-	<FileVersion>1.0.0.0</FileVersion>
-	<InformationalVersion>1.0.0-rc1+build20250630</InformationalVersion>
+    <Version>2.0.0-preview.1</Version>
+	<AssemblyVersion>2.0.0.0</AssemblyVersion>
+	<FileVersion>2.0.0.0</FileVersion>
+	<InformationalVersion>2.0.0-preview.1+build20261106</InformationalVersion>
   </PropertyGroup>
   <ItemGroup>
   	<FrameworkReference Include="Microsoft.AspNetCore.App" />
