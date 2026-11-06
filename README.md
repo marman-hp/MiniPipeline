@@ -15,12 +15,6 @@ MiniPipeline drives the real ASP.NET Core pipeline (`HttpContext` + `RequestDele
 - ✅ **One DI container** – CefGlue.OSR registers into the same `IServiceCollection` as your app (`AddCefGlue()`).
 - ✅ **Desktop UI of your choice** – the demos use Avalonia; CefGlue.OSR also has WinForms, WPF, WinUI 3 and GTK4 controls.
 
----
- **Asp.Net.core Demo**
-![Asp.Net Core demo](20250628122359.gif)
- **Blazor server Demo**
-![Blazor Server/App demo](blazor-web-app-svr.gif)
-
 ## Status on .NET 10 + CefGlue.OSR (CEF 154)
 
 Checked on Windows x64:
@@ -33,6 +27,50 @@ Checked on Windows x64:
 | Blazor WebAssembly | boot, Counter, `HttpClient` fetch of `sample-data/weather.json` |
 
 Not re-tested yet on .NET 10: Linux, `dotnet publish` output, macOS.
+
+## Upgrading from 1.0.0-rc1
+
+2.0 is a breaking release. What changes for an app built on 1.0.0-rc1:
+
+**Stack**
+
+| | 1.0.0-rc1 | 2.0.0-preview.1 |
+|---|---|---|
+| .NET | 8 | **10** (all projects `net10.0`, ASP.NET Core 10 packages) |
+| CEF binding | OutSystems `CefGlue.Common` / `CefGlue.Avalonia` 120 | **CefGlue.OSR** `CefGlue.OSR.Common` / `CefGlue.OSR.Avalonia` 154 (see [Requirements](#requirements)) |
+| Avalonia | 11 | **12** |
+
+**Code**
+
+- `AvaloniaCefBrowser` → `CefGlueBrowser`. It is not a control itself any more: put `browser.Control` in your layout.
+- Register CefGlue in your app's container and create browsers from it (see [Quick Start](#quick-start)):
+
+  ```csharp
+  builder.Services.AddCefGlue(cef => cef.UseAvalonia());                                  // startup
+  var browser = PipelineCefConfig.Services!.GetRequiredService<CefGlueHost>().CreateBrowser(); // view
+  ```
+- `browser.Settings` is gone – pass the settings when the browser is created:
+
+  ```csharp
+  host.CreateBrowser(new CefGlueBrowserOptions
+  {
+      SetupCefBrowserSettings = () => new CefBrowserSettings { DefaultEncoding = "utf-8" },
+  });
+  ```
+- CEF 154 handler signatures: `LifeSpanHandler.OnBeforePopup` gets an `int popupId` after `frame`; `DownloadHandler.OnBeforeDownload` returns `bool` (`true` when you handled it).
+- `CefInitSchemeHandler(settings, cefArgs)` now passes `cefArgs` to CEF as command-line flags (1.0 ignored them).
+
+**Blazor**
+
+- Add `<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>` to the desktop project and use this repo's `Directory.Build.targets`, or `blazor.web.js` is missing and nothing is interactive (see [Blazor](#blazor)).
+- WebSocket mode: set `browser.PermissionHandler = new PipelinePermissionHandler();` on every browser, or the WebSocket never connects (see [WebSocket Support](#websocket-support-experimental)).
+
+**Avalonia 12 side effects** (only if your app uses these packages)
+
+- `Avalonia.ReactiveUI` → `ReactiveUI.Avalonia` (namespace `ReactiveUI.Avalonia`); `.UseReactiveUI()` now takes a configuration callback, e.g. `.UseReactiveUI(_ => { })`. ReactiveUI's `Unit` became `ReactiveUI.Primitives.RxVoid`, and `System.Reactive` is a separate package reference.
+- `Avalonia.Xaml.Interactivity` → `Xaml.Behaviors.Avalonia`; same namespace, but the XAML `assembly=` is now `Xaml.Behaviors.Interactivity`.
+- Avalonia 12 compiles bindings by default; XAML written without `x:DataType` needs `<AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>`.
+- `Avalonia.Diagnostics` has no Avalonia 12 version; remove it.
 
 ## Requirements
 
