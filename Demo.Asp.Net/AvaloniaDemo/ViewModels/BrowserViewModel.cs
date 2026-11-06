@@ -4,7 +4,6 @@ using Avalonia.Media.Imaging;
 using AvaloniaDemo.Behaviors;
 using ReactiveUI;
 using System;
-using System.Reactive;
 using System.Windows.Input;
 using Xilium.CefGlue.Avalonia;
 
@@ -16,7 +15,7 @@ public class BrowserViewModel : ReactiveObject
 
     private bool _isBusy;
     private double _progress;
-    public ReactiveCommand<Unit, Unit> Navigate { get; }
+    public ReactiveCommand<ReactiveUI.Primitives.RxVoid, ReactiveUI.Primitives.RxVoid> Navigate { get; }
     public string Title
     {
         get => _title!;
@@ -63,9 +62,9 @@ public class BrowserViewModel : ReactiveObject
             .Subscribe(_ => this.RaisePropertyChanged(nameof(IsFaviconVisible)));
     }
 
-    AvaloniaCefBrowser? _browser;
+    CefGlueBrowser? _browser;
 
-    public void AttachBrowser(AvaloniaCefBrowser browser)
+    public void AttachBrowser(CefGlueBrowser browser)
     {
         if (!Design.IsDesignMode)
         {

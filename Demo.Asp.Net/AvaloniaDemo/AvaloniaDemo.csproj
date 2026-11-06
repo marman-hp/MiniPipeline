@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AssemblyName>AvaloniaDemo</AssemblyName>
@@ -12,14 +12,13 @@
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
-     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.0" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.1.0.1" />
-    <PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
-    <PackageReference Include="Material.Avalonia" Version="3.11.0" />
-    <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="12.1.6" />
+    <PackageReference Include="System.Reactive" Version="6.1.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
+    <PackageReference Include="Xaml.Behaviors.Avalonia" Version="12.0.7" />
+    <PackageReference Include="CefGlue.OSR.Avalonia" Version="$(CefGlueOSRVersion)" />
+    <PackageReference Include="Material.Avalonia" Version="3.21.0" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
    </ItemGroup>	  
   <ItemGroup>
     <ProjectReference Include="..\..\MiniPipeline\MiniPipeline.Core.csproj" />

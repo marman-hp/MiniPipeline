@@ -4,7 +4,7 @@ using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
+using ReactiveUI.Primitives;
 
 namespace AvaloniaDemo.ViewModels
 {
@@ -13,7 +13,7 @@ namespace AvaloniaDemo.ViewModels
         private readonly ObservableCollection<DownloadItemViewModel> _downloadsItems;
         public ObservableCollection<DownloadItemViewModel> DownloadItems => _downloadsItems;
 
-        public ReactiveCommand<Unit, Unit> ClearCompletedDownloads { get; }
+        public ReactiveCommand<RxVoid, RxVoid> ClearCompletedDownloads { get; }
 
         public DownloadManagerViewModel()
         {

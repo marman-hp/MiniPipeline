@@ -123,7 +123,7 @@ namespace MiniPipeline.CefGlue
             {
                 (app as IHost)?.StopAsync();
             }
-            CefRuntime.Shutdown();
+            CefRuntimeLoader.Shutdown();
         }
 
 

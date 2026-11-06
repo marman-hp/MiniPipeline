@@ -12,12 +12,12 @@ namespace Minimal.BrowserUI;
 
 public partial class BrowserView : UserControl
 {
-    private AvaloniaCefBrowser browser;
+    private CefGlueBrowser browser;
 
     public BrowserView()
     {
         InitializeComponent();
-        browser = new AvaloniaCefBrowser();
+        browser = new CefGlueBrowser();
         browser.Address = MiniPipeline.Core.PipelineCefConfig.BaseAddress;
         browser.LoadStart += OnBrowserLoadStart;
 
@@ -35,7 +35,7 @@ public partial class BrowserView : UserControl
         };
         addressTextBox.KeyDown += OnAddressTextBoxKeyDown;
 
-        browserWrapper.Child = browser;
+        browserWrapper.Child = browser.Control;
 
     }
 
@@ -86,6 +86,7 @@ public partial class BrowserView : UserControl
         protected override bool OnBeforePopup(
             CefBrowser browser,
             CefFrame frame,
+            int popupId,
             string targetUrl,
             string targetFrameName,
             CefWindowOpenDisposition targetDisposition,
@@ -101,9 +102,10 @@ public partial class BrowserView : UserControl
             Dispatcher.UIThread.Post(() =>
             {
                 var window = new Window();
-                var popupBrowser = new AvaloniaCefBrowser();
+                var popupBrowser = new CefGlueBrowser();
                 popupBrowser.Address = targetUrl;
-                window.Content = popupBrowser;
+                window.Content = popupBrowser.Control;
+                window.Closed += (_, _) => popupBrowser.Dispose();
                 window.Position = new PixelPoint(bounds.X, bounds.Y);
                 window.Height = bounds.Height;
                 window.Width = bounds.Width;

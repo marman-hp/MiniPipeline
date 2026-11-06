@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using MiniPipeline.CefGlue;
 using MiniPipeline.Core;
 using Xilium.CefGlue;
@@ -119,6 +119,6 @@ namespace BlazorApp.Desktop
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace()
-                .UseReactiveUI();
+                .UseReactiveUI(_ => { });
     }
 }

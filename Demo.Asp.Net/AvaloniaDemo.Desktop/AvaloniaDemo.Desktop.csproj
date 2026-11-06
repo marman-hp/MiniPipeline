@@ -2,9 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
+		<CopyCefRuntime>true</CopyCefRuntime>
 		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
-    One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-		<TargetFramework>net8.0</TargetFramework>
+    One for Windows with net10.0-windows TFM, one for MacOS with net10.0-macos and one with net10.0 TFM for Linux.-->
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		
 		<!-- NEED TO SETUP THIS AddRazorSupportForMvc True -->
@@ -39,7 +40,7 @@
 	</PropertyGroup>	
 	<ItemGroup>
 		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
+		<PackageReference Include="CefGlue.OSR.Avalonia" Version="$(CefGlueOSRVersion)" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
 	</ItemGroup>

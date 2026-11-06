@@ -1,0 +1,25 @@
+<Project>
+  <!--
+    CEF binaries are not in the CefGlue.OSR packages. A desktop app sets <CopyCefRuntime>true</CopyCefRuntime>
+    and gets <CefGlueOSRDir>cef\runtimes\<rid>\native copied to runtimes\<rid>\native, where CefRuntime.Load looks.
+  -->
+  <PropertyGroup Condition="'$(CopyCefRuntime)' == 'true'">
+    <_CefRuntimeRid Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</_CefRuntimeRid>
+    <_CefRuntimeRid Condition="'$(_CefRuntimeRid)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">win-x64</_CefRuntimeRid>
+    <_CefRuntimeRid Condition="'$(_CefRuntimeRid)' == '' and $([MSBuild]::IsOSPlatform('Linux'))">linux-x64</_CefRuntimeRid>
+    <_CefRuntimeNativeDir>$(CefGlueOSRDir)cef\runtimes\$(_CefRuntimeRid)\native\</_CefRuntimeNativeDir>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CopyCefRuntime)' == 'true'">
+    <None Include="$(_CefRuntimeNativeDir)**">
+      <Link>runtimes\$(_CefRuntimeRid)\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Visible>false</Visible>
+    </None>
+  </ItemGroup>
+
+  <Target Name="WarnMissingCefRuntime" BeforeTargets="Build" Condition="'$(CopyCefRuntime)' == 'true' and !Exists('$(_CefRuntimeNativeDir)')">
+    <Warning Text="CEF runtime not found at $(_CefRuntimeNativeDir). Run get-cef.ps1 in CefGlue.OSR, or set CefGlueOSRDir." />
+  </Target>
+</Project>

@@ -1,6 +1,13 @@
 <Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <AvaloniaVersion>11.1.0</AvaloniaVersion>
+    <AvaloniaVersion>12.1.5</AvaloniaVersion>
+    <!-- The demo XAML uses reflection bindings; Avalonia 12 compiles bindings by default. -->
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+
+    <!-- CefGlue.OSR (https://github.com/marman-hp/CefGlue.OSR). Packages come from the feed in nuget.config. -->
+    <CefGlueOSRVersion>154.8037.94</CefGlueOSRVersion>
+    <!-- CefGlue.OSR checkout; its cef\runtimes folder holds the CEF binaries copied next to the demo apps. -->
+    <CefGlueOSRDir Condition="'$(CefGlueOSRDir)' == ''">$(MSBuildThisFileDirectory)..\CefGlue.OSR\</CefGlueOSRDir>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 # MiniPipeline 🚀
 
 
-A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **without Kestrel** and integrate directly with **desktop UI frameworks** like **Avalonia** using [**OutSystems Avalonia CefGlue**](https://github.com/OutSystems/CefGlue) (Chromium Embedded Framework). Ideal for hybrid desktop/web GUI apps, internal tools, and also support cross platform. 
+A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **without Kestrel** and integrate directly with **desktop UI frameworks** like **Avalonia** using [**CefGlue.OSR**](https://github.com/marman-hp/CefGlue.OSR) (Chromium Embedded Framework, off-screen rendering). Ideal for hybrid desktop/web GUI apps, internal tools, and also support cross platform. 
 
 ---
 
@@ -11,10 +11,10 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
 - ✅ Full `HttpContext` support: GET, POST, FILE UPLOAD, SESSION, AUTH.
 - ✅ Razor Pages rendering without server.
 - ✅ `IHttpResponseFeature`, `IHttpResponseBodyFeature`, and custom feature system.
-- ✅ Custom scheme handler (`yourscheme://yourhost`) via [**OutSystems Avalonia CefGlue**](https://github.com/OutSystems/CefGlue).
+- ✅ Custom scheme handler (`yourscheme://yourhost`) via [**CefGlue.OSR**](https://github.com/marman-hp/CefGlue.OSR).
 - ✅ Lightweight DI and configuration (alt to `WebApplication.CreateBuilder`).
 - ✅ Designed for Avalonia Desktop apps.
-- ✅ Compatible with **websocket**, **signalr**, and **blazor .NET8 only** (`🔥EXPERIMENTAL`).
+- ✅ Compatible with **websocket**, **signalr**, and **blazor** (`🔥EXPERIMENTAL`).
 
 ---
  **Asp.Net.core Demo**
@@ -37,6 +37,14 @@ To explicitly enable it in Avalonia, set this flag at your program entry point:
 ```csharp
 PipelineCefConfig.UseBlazorLongPollingTransport = true;
 ```
+
+## Requirements
+
+- .NET 10 SDK, x64
+- [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR) (CEF 154) cloned **next to** this repo, i.e. `..\CefGlue.OSR`:
+  - build it once; it packs its NuGet packages into `CefGlue.OSR\Nuget\output`, which `nuget.config` here uses as a package source.
+  - download the CEF binaries with its `get-cef.ps1`; the desktop demos copy `CefGlue.OSR\cef\runtimes\<rid>\native` next to their exe.
+- Different location? Pass `-p:CefGlueOSRDir=path\to\CefGlue.OSR\` and change the path in `nuget.config`.
 
 ## Limitation
 - **Project Template**  
@@ -86,7 +94,7 @@ PipelineCefConfig.UseBlazorLongPollingTransport = true;
 
 
 - **The Blazor Support [<span style="color:red">EXPERIMENTAL</span>]**  
-   Only tested with blazor  .NET 8.  
+   Tested with Blazor on .NET 8; not yet re-tested since the move to .NET 10.  
    in **blazor web server** mode you can not use **httpclient** to access your own host, because its not server just **scheme handler**.
 
 - **The Blazor WebAssembly**  
@@ -194,5 +202,5 @@ On your Avalonia program entry point:
    Provided the foundation and insight on bridging ASP.NET Core with CEF – this project wouldn't exist without that pioneering work.
 
 - **CEF Integration**  
-  [OutSystems Avalonia CefGlue](https://github.com/OutSystems/CefGlue) – maintained by the OutSystems communities  
-  Enables Chromium Embedded Framework to run seamlessly in Avalonia UI. 
+  [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR) – CEF off-screen rendering for WinForms, WPF, WinUI 3, Avalonia and GTK4,  
+  based on [OutSystems CefGlue](https://github.com/OutSystems/CefGlue) and Xilium CefGlue. 

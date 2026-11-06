@@ -17,14 +17,14 @@ namespace AvaloniaDemo.Handler
             _downloadsPath = downloadpath();
             _fileName = "";
         }
-        protected override void OnBeforeDownload(
+        protected override bool OnBeforeDownload(
             CefBrowser browser,
             CefDownloadItem downloadItem,
             string suggestedName,
             CefBeforeDownloadCallback callback)
         {
             if (callback == null)
-                return;
+                return false;
 
             _fileName = suggestedName;
             var fullname = GetUniqueFileName(_downloadsPath, suggestedName);
@@ -39,8 +39,7 @@ namespace AvaloniaDemo.Handler
 
 
             callback.Continue(fullname, showDialog: false);
-
-
+            return true;
         }
 
         protected override void OnDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback)

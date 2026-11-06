@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using MiniPipeline.CefGlue;
@@ -80,7 +80,7 @@ class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
 
 
     private static void Cleanup(string cachePath)

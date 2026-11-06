@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
+		<CopyCefRuntime>true</CopyCefRuntime>
 		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
-    One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-		<TargetFramework>net8.0</TargetFramework>
+    One for Windows with net10.0-windows TFM, one for MacOS with net10.0-macos and one with net10.0 TFM for Linux.-->
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<!-- NEED TO SETUP THIS AddRazorSupportForMvc True -->
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
@@ -19,10 +20,8 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
+		<PackageReference Include="CefGlue.OSR.Avalonia" Version="$(CefGlueOSRVersion)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.14" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\MiniPipeline.CefGlue\MiniPipeline.CefGlue.csproj" />

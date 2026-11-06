@@ -14,7 +14,7 @@ namespace AvaloniaDemo.Views
     public partial class BrowserView : UserControl
     {
 
-        private AvaloniaCefBrowser browser;
+        private CefGlueBrowser browser;
         BrowserViewModel? viewModel = null;
         public BrowserView()
         {
@@ -26,7 +26,7 @@ namespace AvaloniaDemo.Views
                 if (!Design.IsDesignMode)
                 {
                     viewModel = DataContext as BrowserViewModel;
-                    browser = new AvaloniaCefBrowser();
+                    browser = new CefGlueBrowser(setupCefBrowserSettings: () => new Xilium.CefGlue.CefBrowserSettings { DefaultEncoding = "utf-8" });
                     browser.DisplayHandler = new SimpleDisplayHandler();
                     browser.LifeSpanHandler = new SimpleLifeSpanHandler();
                     browser.ContextMenuHandler = new SimpleContextMenu();
@@ -89,9 +89,8 @@ namespace AvaloniaDemo.Views
                     browser.TitleChanged += (o, title) => viewModel!.Title = string.IsNullOrEmpty(title) ? viewModel!.Url : title;
 
 
-                    browser.Settings.DefaultEncoding = "charset: utf-8";
                     var decorator = this.FindControl<Decorator>("browserWrapper");
-                    decorator!.Child = browser;
+                    decorator!.Child = browser.Control;
 
 
 
