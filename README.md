@@ -74,10 +74,35 @@ Not re-tested yet on .NET 10: Linux, `dotnet publish` output, macOS.
 
 ## Requirements
 
-- .NET 10 SDK, x64
-- **CefGlue.OSR packages** – not on nuget.org yet, so this repo ships them in `localnuget\` (`CefGlue.OSR.Common` and `CefGlue.OSR.Avalonia` 154.8037.94); `nuget.config` restores `CefGlue.OSR.*` from there and everything else from nuget.org. Nothing to build.
-- **CEF binaries** (CEF 154, not in the packages) – get them with [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR)'s `get-cef.ps1`, in a CefGlue.OSR checkout **next to** this repo (`..\CefGlue.OSR`). The desktop demos copy `CefGlue.OSR\cef\runtimes\<rid>\native` next to their exe; elsewhere, pass `-p:CefGlueOSRDir=path\to\CefGlue.OSR\`.
-- Updating the packages from a newer CefGlue.OSR build: copy its `Nuget\output\CefGlue.OSR.Common.*.nupkg` and `CefGlue.OSR.Avalonia.*.nupkg` into `localnuget\`. Same version number as before? Delete `cefglue.osr.*` from your NuGet packages folder too, or the cached copy keeps being used.
+- .NET 10 SDK, x64 (tested on Windows)
+- **[CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR)** – the CEF binding MiniPipeline runs on. It is **not on nuget.org yet**, so:
+  - its NuGet packages ship in this repo, in `localnuget\` (`CefGlue.OSR.Common` and `CefGlue.OSR.Avalonia` 154.8037.94); `nuget.config` restores `CefGlue.OSR.*` from there and everything else from nuget.org. Nothing to build for that.
+  - **the CEF binaries are not in those packages – you have to download them yourself** (next section).
+
+### Download CEF (required, manual)
+
+MiniPipeline needs the CEF runtime CefGlue.OSR is built for: **CEF 154.0.33** (Chromium 154.0.8037.94), Windows x64 *minimal* distribution. The desktop demos copy it next to their exe from a CefGlue.OSR checkout **next to** this repo (`..\CefGlue.OSR`):
+
+```powershell
+git clone https://github.com/marman-hp/CefGlue.OSR ..\CefGlue.OSR
+cd ..\CefGlue.OSR
+powershell -ExecutionPolicy Bypass -File .\get-cef.ps1
+```
+
+`get-cef.ps1` downloads that exact CEF build from the official [CEF builds](https://cef-builds.spotifycdn.com/index.html) site and unpacks it into `CefGlue.OSR\cef\runtimes\win-x64\native\`. Prefer to download it yourself? Get [cef_binary_154.0.33+ga03e714+chromium-154.0.8037.94_windows64_minimal.tar.bz2](https://cef-builds.spotifycdn.com/cef_binary_154.0.33%2Bga03e714%2Bchromium-154.0.8037.94_windows64_minimal.tar.bz2) (~165 MB), then run `.\get-cef.ps1 -FromArchive <path-to-the-archive>`.
+
+CefGlue.OSR somewhere else? Build with `-p:CefGlueOSRDir=path\to\CefGlue.OSR\`. A build warns when it can't find the CEF runtime.
+
+### Building CefGlue.OSR yourself
+
+Want a newer CefGlue.OSR, or to change it? Build it from source – see its [README](https://github.com/marman-hp/CefGlue.OSR#build):
+
+```powershell
+cd ..\CefGlue.OSR
+dotnet build CefGlue.OSR.sln -c Release -p:Platform=x64
+```
+
+The build packs its packages into `CefGlue.OSR\Nuget\output\`. Copy `CefGlue.OSR.Common.*.nupkg` and `CefGlue.OSR.Avalonia.*.nupkg` from there into this repo's `localnuget\` (and set `CefGlueOSRVersion` in `Directory.Build.props` if the version changed). Same version number as before? Also delete `cefglue.osr.*` from your NuGet packages folder, or the cached copy keeps being used.
 
 ## Quick Start
 
