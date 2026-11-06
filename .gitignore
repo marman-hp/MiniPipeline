@@ -454,3 +454,8 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Files uploaded while trying the demos (some demo pages save into the project's wwwroot)
+**/wwwroot/uploads/
+**/wwwroot/unsafe_uploads/
+**/bin/**/uploads/
