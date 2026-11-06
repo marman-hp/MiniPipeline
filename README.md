@@ -1,20 +1,19 @@
 # MiniPipeline 🚀
 
+Run a **full ASP.NET Core app inside a desktop app — without Kestrel, without a port.**
 
-A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **without Kestrel** and integrate directly with **desktop UI frameworks** like **Avalonia** using [**CefGlue.OSR**](https://github.com/marman-hp/CefGlue.OSR) (Chromium Embedded Framework, off-screen rendering). Ideal for hybrid desktop/web GUI apps, internal tools, and also support cross platform. 
+MiniPipeline drives the real ASP.NET Core pipeline (`HttpContext` + `RequestDelegate`) straight from a Chromium (CEF) custom scheme handler, using [**CefGlue.OSR**](https://github.com/marman-hp/CefGlue.OSR). Think *Electron, but the backend is ASP.NET Core instead of Node.js*: if you know Razor Pages, MVC, minimal APIs or Blazor, you already know how to build a cross-platform desktop app.
 
 ---
 
 ## Features
 
-- ✅ No Kestrel – In-memory, stream-based HTTP pipeline using pure `HttpContext` and `RequestDelegate`.
-- ✅ Full `HttpContext` support: GET, POST, FILE UPLOAD, SESSION, AUTH.
-- ✅ Razor Pages rendering without server.
-- ✅ `IHttpResponseFeature`, `IHttpResponseBodyFeature`, and custom feature system.
-- ✅ Custom scheme handler (`yourscheme://yourhost`) via [**CefGlue.OSR**](https://github.com/marman-hp/CefGlue.OSR).
-- ✅ Lightweight DI and configuration (alt to `WebApplication.CreateBuilder`).
-- ✅ Designed for Avalonia Desktop apps.
-- ✅ Compatible with **websocket**, **signalr**, and **blazor** (`🔥EXPERIMENTAL`).
+- ✅ **No Kestrel, no socket** – requests go from Chromium to your `RequestDelegate` in memory, through a custom scheme (`app://local` by default).
+- ✅ **The whole ASP.NET Core stack** – Razor Pages, MVC, minimal APIs, middleware, file upload, cookie auth, session, antiforgery.
+- ✅ **Blazor** – Blazor Server (long polling, or WebSocket 🔥experimental) and Blazor WebAssembly.
+- ✅ **Static web assets** – `wwwroot` and Razor class library `_content/` are served straight from the build, no copy step.
+- ✅ **One DI container** – CefGlue.OSR registers into the same `IServiceCollection` as your app (`AddCefGlue()`).
+- ✅ **Desktop UI of your choice** – the demos use Avalonia; CefGlue.OSR also has WinForms, WPF, WinUI 3 and GTK4 controls.
 
 ---
  **Asp.Net.core Demo**
@@ -22,180 +21,175 @@ A blazing-fast, lightweight, in-memory ASP.NET Core pipeline designed to run **w
  **Blazor server Demo**
 ![Blazor Server/App demo](blazor-web-app-svr.gif)
 
+## Status on .NET 10 + CefGlue.OSR (CEF 154)
 
-## How About Running Blazor Without WebSocket?
+Checked on Windows x64:
 
-Starting from **RC1**, MiniPipeline now supports **longPolling** transport for Blazor Server.
+| Sample | What was checked |
+|---|---|
+| ASP.NET Core (Razor Pages) | pages, CSS/JS from `wwwroot`, MiniProfiler middleware |
+| Blazor Server – long polling | Counter with `ProtectedLocalStorage`, JS interop (map), `DynamicComponent`, background work + dispose |
+| Blazor Server – WebSocket 🔥 | Counter over a live WebSocket circuit |
+| Blazor WebAssembly | boot, Counter, `HttpClient` fetch of `sample-data/weather.json` |
 
-
-If you don't want to use WebSocket, simply **skip calling** `AddSocketPipeline()`.  
-This will cause the SignalR transport to **fall back to longPolling** automatically.
-with longpolling transport you can use custome scheme (`yourscheme://yourhost`).
-
-To explicitly enable it in Avalonia, set this flag at your program entry point:
-
-```csharp
-PipelineCefConfig.UseBlazorLongPollingTransport = true;
-```
+Not re-tested yet on .NET 10: Linux, `dotnet publish` output, macOS.
 
 ## Requirements
 
 - .NET 10 SDK, x64
-- [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR) (CEF 154) cloned **next to** this repo, i.e. `..\CefGlue.OSR`:
-  - build it once; it packs its NuGet packages into `CefGlue.OSR\Nuget\output`, which `nuget.config` here uses as a package source.
-  - download the CEF binaries with its `get-cef.ps1`; the desktop demos copy `CefGlue.OSR\cef\runtimes\<rid>\native` next to their exe.
-- Different location? Pass `-p:CefGlueOSRDir=path\to\CefGlue.OSR\` and change the path in `nuget.config`.
+- **CefGlue.OSR packages** – not on nuget.org yet, so this repo ships them in `localnuget\` (`CefGlue.OSR.Common` and `CefGlue.OSR.Avalonia` 154.8037.94); `nuget.config` restores `CefGlue.OSR.*` from there and everything else from nuget.org. Nothing to build.
+- **CEF binaries** (CEF 154, not in the packages) – get them with [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR)'s `get-cef.ps1`, in a CefGlue.OSR checkout **next to** this repo (`..\CefGlue.OSR`). The desktop demos copy `CefGlue.OSR\cef\runtimes\<rid>\native` next to their exe; elsewhere, pass `-p:CefGlueOSRDir=path\to\CefGlue.OSR\`.
+- Updating the packages from a newer CefGlue.OSR build: copy its `Nuget\output\CefGlue.OSR.Common.*.nupkg` and `CefGlue.OSR.Avalonia.*.nupkg` into `localnuget\`. Same version number as before? Delete `cefglue.osr.*` from your NuGet packages folder too, or the cached copy keeps being used.
 
-## Limitation
-- **Project Template**  
-  No official template yet.  
-  For now, use an Avalonia project as the base and modify the project header:
+## Quick Start
 
-  ```xml
-  <Project Sdk="Microsoft.NET.Sdk.Razor"> 
-  and add on the top PropertyGroup
-  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>	
-  ```
+**1. Your ASP.NET Core startup** – the same code you would write for Kestrel:
 
-  To ensure assets are copied correctly, add the following to your .csproj file:  
-  ```xml
-  <Target Name="CopyWebAssetsAfterBuild" AfterTargets="Build">
-			<ItemGroup>
-				<wwwrootFilesToOutput Include="wwwroot/**/*" />
-			</ItemGroup>
-			<Copy SourceFiles="@(wwwrootFilesToOutput)" DestinationFolder="$(OutputPath)wwwroot\%(RecursiveDir)" SkipUnchangedFiles="true" />
-	</Target>
-  ```
-
-  To copy wwwroot to your publish output folder , add the following to your .csproj file:
-  ```xml  
- 	<Target Name="CopyWebAssetsAfterPublish" AfterTargets="Publish">
-		<ItemGroup>
-			<wwwrootFilesToPublish Include="$(ProjectDir)wwwroot\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(wwwrootFilesToPublish)" DestinationFolder="$(PublishDir)wwwroot\%(wwwrootFilesToPublish.RecursiveDir)" SkipUnchangedFiles="true" />
-	</Target>
-  ```
-
-- **WebSocket Support [<span style="color:red">EXPERIMENTAL</span>]**  
-  Since CEF bypasses the native `ws://` and `wss://` schemes in scheme handler, MiniPipeline uses a background TCP listener to capture WebSocket requests and signal the handshake.
-  This makes it compatible with:
-
-  ```c#
-  //for standard websocket
-  app.UseWebSockets();
-
-  //for standard signalr
-  app.UseSignalR()
-  app.MapHub<YourHub>("/hub");
-  ```  
-
-
-
-- **The Blazor Support [<span style="color:red">EXPERIMENTAL</span>]**  
-   Tested with Blazor on .NET 8; not yet re-tested since the move to .NET 10.  
-   in **blazor web server** mode you can not use **httpclient** to access your own host, because its not server just **scheme handler**.
-
-- **The Blazor WebAssembly**  
-  - Create a standard Blazor WebAssembly project
-  - Publish the static output
-  - Embed it into an Avalonia desktop project
-  
-- **Hot Reload**  
-   Not supported at the moment.    
-
-- **Other Limitation**  
-   I know the docs aren’t great yet — I’ll clean them up once I have more time. A test project is also on the way.
-
-## Quick Start 
-On your StartUp code :
 ```csharp
-
 using MiniPipeline.Core;
-using MiniPipeline.WebSocket; //If using WebSocket
+using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
 
-var builder = MiniPipelineBuilder.CreateBuilder();
+var builder = MiniPipelineBuilder.CreateBuilder();   // WebApplication.CreateBuilder, minus Kestrel
 
+// CefGlue.OSR shares your container: one set of singletons, CefGlueHost resolvable anywhere.
+builder.Services.AddCefGlue(cef => cef.UseAvalonia());
 
-// If using WebSocket:
-// Blazor web app/server default need websocket, it should be enabled
-// with RC1 now you can skip this if you don't need to work with websocket 
-
-//this only for websocket handshake 
-// builder.Services.Configure<PipelineSocketOptions>(config =>
-// {
-//    config.UseSsl = true;
-//    config.PfxPath = @"yourpfxfile.pfx"; 
-//    config.Password = "1234";
-// }).AddSocketPipeline();
-
-var app = builder.Build();   
+var app = builder.Build();
 app.UseRouting();
 
-
-
-app.MapGet("/", () =>
-{
-    const string html = """
+app.MapGet("/", () => Results.Content("""
     <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Sample</title>
-    </head>
-    <body>
-        IT JUST WORKS!
-    </body>
-    </html>
-    """;
-
-    return Results.Content(html, "text/html");
-});
+    <html><head><title>Sample</title></head>
+    <body>IT JUST WORKS!</body></html>
+    """, "text/html"));
 
 return app;
-
 ```
 
-On your Avalonia program entry point:
+**2. Your Avalonia entry point** – register the scheme handler and start CEF:
+
 ```csharp
-  
-  using MiniPipeline.Core;
-  using MiniPipeline.CefGlue;
- 
+using MiniPipeline.Core;
+using MiniPipeline.CefGlue;
+using Xilium.CefGlue;
 
-   var  app = YourStartUpCode();
+var app = YourStartUpCode();
+var cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "YourApp");
 
-   AppDomain.CurrentDomain.ProcessExit += delegate { 
-      app.CefShutdown();
-   };
+AppDomain.CurrentDomain.ProcessExit += delegate { app.CefShutdown(); };
 
+// optional, default is app://local
+PipelineCefConfig.Scheme = "app";
+PipelineCefConfig.Host = "local";
 
-   // If you're using WebSocket: 
-   // The scheme name will become a standard `http` or `https` depending on your socket options.
-   // and the host name must be standard hostname (e.g localhost)
-   // For SSL, you'll need a `.pfx` certificate.
+var settings = new CefSettings
+{
+    RootCachePath = cachePath,
+    CachePath = cachePath,
+    PersistSessionCookies = true,   // keep ASP.NET session/auth cookies across restarts
+};
 
-   // Example using non standard scheme:
-      PipelineCefConfig.Scheme = "app";
-      PipelineCefConfig.Host = "local";
-        
-   //use PipelineCefConfig.BaseAddress to get base address (e.g https://localhost:8080 default)
-
-   var setting = new CefSettings()
-   {
-      CookieableSchemesList = PipelineCefConfig.Scheme
-      .......
-   };        
-
-
-   BuildAvaloniaApp().AfterSetup(o =>
-   {
-      app.CefInitSchemeHandler(setting);
-   })
-   .StartWithClassicDesktopLifetime(args);
-
-
+BuildAvaloniaApp()
+    .AfterSetup(_ => app.CefInitSchemeHandler(settings))   // optional 2nd argument: extra CEF command-line flags
+    .StartWithClassicDesktopLifetime(args);
 ```
+
+**3. Your browser view** – create the browser from the app's container and open `PipelineCefConfig.BaseAddress`:
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+using MiniPipeline.Core;
+using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
+
+var host = PipelineCefConfig.Services!.GetRequiredService<CefGlueHost>();
+var browser = host.CreateBrowser();
+browser.Address = PipelineCefConfig.BaseAddress;   // e.g. app://local
+browserWrapper.Child = browser.Control;
+```
+
+## Project setup
+
+No project template yet. Start from an Avalonia app and change the project file:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Razor">   <!-- Razor SDK: Razor Pages/Blazor, and no console window -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <CopyCefRuntime>true</CopyCefRuntime>                    <!-- copies the CEF binaries next to the exe -->
+    <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>  <!-- Blazor only, see below -->
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="CefGlue.OSR.Avalonia" Version="$(CefGlueOSRVersion)" />
+  </ItemGroup>
+</Project>
+```
+
+`CopyCefRuntime` and the Blazor asset fix come from this repo's `Directory.Build.targets`; copy it into your own solution if you use MiniPipeline outside it.
+
+Running from `bin\` needs no `wwwroot` copy step: MiniPipeline reads the build's static web assets manifest, which also covers Razor class library `_content/`. For `dotnet publish`, the demos still copy `wwwroot` with a `CopyWebAssetsAfterPublish` target (publish hasn't been re-tested on .NET 10).
+
+## Blazor
+
+- **Use long polling.** It runs entirely on the scheme handler: no TCP listener, no certificate, works on `app://local`.
+
+  ```csharp
+  PipelineCefConfig.UseBlazorLongPollingTransport = true;   // and don't call AddSocketPipeline()
+  ```
+
+  The Blazor demo switches with a command-line argument: `BlazorApp.Desktop.exe --longpolling`.
+- **`RequiresAspNetWebAssets`** – since .NET 9, `_framework/blazor.web.js` ships as a static web asset that the Web SDK registers only for console (`Exe`) projects. A desktop app is a `WinExe` on the Razor SDK, so set `<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>`; `Directory.Build.targets` then registers the script. Without it the page renders but nothing is interactive ("Loading..." forever).
+- **`HttpClient` to your own app** doesn't work from Blazor Server components – there is no server listening, only the scheme handler. Call your services directly instead.
+- **Blazor WebAssembly** – publish a standard Blazor WebAssembly project and serve its `wwwroot` with `UseDefaultFiles()`, `UseStaticFiles()` and `MapFallbackToFile("index.html")` (see `BuildBlazorWebAssembly` in the Minimal demo).
+
+## WebSocket Support [<span style="color:red">EXPERIMENTAL</span>]
+
+> ⚠️ Experimental, and may be removed in a future version. Prefer long polling for Blazor.
+
+A CEF scheme handler can't serve `ws://`/`wss://`, so `AddSocketPipeline()` starts a background TCP listener on `127.0.0.1` that takes the WebSocket handshake and hands it to your pipeline. That makes these work:
+
+```csharp
+app.UseWebSockets();          // plain WebSockets
+app.MapHub<YourHub>("/hub");  // SignalR
+```
+
+What it needs:
+
+- The scheme becomes `http`/`https` on `localhost:<port>` (default `8080`); for `wss`, a `.pfx` certificate:
+
+  ```csharp
+  builder.Services.Configure<PipelineSocketOptions>(config =>
+  {
+      config.UseSsl = true;
+      config.PfxPath = "yourpfxfile.pfx";
+      config.Password = "1234";
+  }).AddSocketPipeline();
+  ```
+
+  For local testing, `dotnet dev-certs https -ep yourpfxfile.pfx -p 1234` exports the ASP.NET Core development certificate (trust it once with `dotnet dev-certs https --trust`).
+- **`PipelinePermissionHandler` on every browser.** Pages come from the scheme handler, so Chromium sees no IP address and treats them as public; a WebSocket from such a page to `127.0.0.1` needs Chromium's *Local Network Access* permission. OSR browsers never show that prompt, so without a handler the socket waits forever before its handshake. The handler grants it only for your app's own origin:
+
+  ```csharp
+  browser.PermissionHandler = new PipelinePermissionHandler();
+  ```
+- Any local process can connect to the listener's port – keep that in mind for what your hubs expose.
+
+## Good to know
+
+- **No `Referer` from `app://` pages.** Third-party services that require one block your requests – e.g. `tile.openstreetmap.org` answers 403. The map sample uses [OpenFreeMap](https://openfreemap.org) tiles, which need no key and no Referer.
+- **App size** – CEF adds roughly 150–300 MB, much like Electron.
+
+## Limitations
+
+- **Project template** – none yet, see [Project setup](#project-setup).
+- **Hot Reload** – not supported at the moment.
+- **Platforms** – tested on Windows x64. CefGlue.OSR also runs Avalonia and GTK4 on Linux x64; MiniPipeline hasn't been tried there yet.
+- **Docs** – I know the docs aren't great yet — I'll clean them up once I have more time. A test project is also on the way.
+
 ## Credits
 - **Core Inspiration**  
    [Chromium.AspNetCore.Bridge](https://github.com/ChromiumDotNet/Chromium.AspNetCore.Bridge) – by Alex Maitland  
@@ -203,4 +197,4 @@ On your Avalonia program entry point:
 
 - **CEF Integration**  
   [CefGlue.OSR](https://github.com/marman-hp/CefGlue.OSR) – CEF off-screen rendering for WinForms, WPF, WinUI 3, Avalonia and GTK4,  
-  based on [OutSystems CefGlue](https://github.com/OutSystems/CefGlue) and Xilium CefGlue. 
+  based on [OutSystems CefGlue](https://github.com/OutSystems/CefGlue) and Xilium CefGlue.
