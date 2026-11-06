@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,6 +38,11 @@ namespace MiniPipeline.Core
         private static void Inititalize(WebApplicationBuilder builder)
         {
             builder.WebHost.UseSetting("UseKestrel", "false");
+
+            // A desktop app runs from bin\, where wwwroot (and Razor class library _content/) only exist through the
+            // build's staticwebassets manifest. ASP.NET reads it in Development only; read it always. Published
+            // output has no manifest and serves its copied wwwroot as before.
+            builder.WebHost.UseStaticWebAssets();
             builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);
 
             // Remove existing IServer (usually Kestrel)

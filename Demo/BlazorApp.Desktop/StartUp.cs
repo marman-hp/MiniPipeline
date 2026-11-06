@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 using MiniPipeline.Core;
+using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
 using MiniPipeline.WebSocket;
 using Microsoft.Extensions.Hosting;
 
@@ -24,6 +26,9 @@ namespace BlazorApp.Desktop
         internal static IApplicationBuilder BuildBlazorWebApp()
         {
             var builder = MiniPipelineBuilder.CreateBuilder();
+
+            // CefGlue.OSR shares the app container: one set of singletons, CefGlueHost resolvable anywhere.
+            builder.Services.AddCefGlue(cef => cef.UseAvalonia());
 
             builder.Environment.EnvironmentName = Environments.Development;
          

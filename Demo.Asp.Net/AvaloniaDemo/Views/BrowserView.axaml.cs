@@ -6,7 +6,9 @@ using AvaloniaDemo.ViewModels;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
 
 namespace AvaloniaDemo.Views
 {
@@ -26,7 +28,13 @@ namespace AvaloniaDemo.Views
                 if (!Design.IsDesignMode)
                 {
                     viewModel = DataContext as BrowserViewModel;
-                    browser = new CefGlueBrowser(setupCefBrowserSettings: () => new Xilium.CefGlue.CefBrowserSettings { DefaultEncoding = "utf-8" });
+                    var options = new CefGlueBrowserOptions
+                    {
+                        SetupCefBrowserSettings = () => new Xilium.CefGlue.CefBrowserSettings { DefaultEncoding = "utf-8" },
+                    };
+                    // From the app container (AddCefGlue in StartUp), so the browser shares the app's services.
+                    var host = MiniPipeline.Core.PipelineCefConfig.Services?.GetService<CefGlueHost>();
+                    browser = host?.CreateBrowser(options) ?? new CefGlueBrowser(setupCefBrowserSettings: options.SetupCefBrowserSettings);
                     browser.DisplayHandler = new SimpleDisplayHandler();
                     browser.LifeSpanHandler = new SimpleLifeSpanHandler();
                     browser.ContextMenuHandler = new SimpleContextMenu();

@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MiniPipeline.Core;
+using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
 using MiniPipeline.WebSocket;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -22,6 +24,9 @@ namespace Minimal.BrowserUI.Desktop
         internal static IApplicationBuilder BuildWebSocket()
         {
             var builder = MiniPipelineBuilder.CreateBuilder();
+
+            // CefGlue.OSR shares the app container: one set of singletons, CefGlueHost resolvable anywhere.
+            builder.Services.AddCefGlue(cef => cef.UseAvalonia());
 
             builder.Services.Configure<PipelineSocketOptions>(config =>
             {
@@ -139,6 +144,9 @@ namespace Minimal.BrowserUI.Desktop
         {
             var builder = MiniPipelineBuilder.CreateBuilder();
 
+            // CefGlue.OSR shares the app container: one set of singletons, CefGlueHost resolvable anywhere.
+            builder.Services.AddCefGlue(cef => cef.UseAvalonia());
+
 
             builder.Services.Configure<PipelineSocketOptions>(config =>
             {
@@ -211,6 +219,9 @@ namespace Minimal.BrowserUI.Desktop
         {
             //before run this, you need publish the BlazorApp.Client to root project folder of BlazorApp.Desktop
             var builder = MiniPipelineBuilder.CreateBuilder();
+
+            // CefGlue.OSR shares the app container: one set of singletons, CefGlueHost resolvable anywhere.
+            builder.Services.AddCefGlue(cef => cef.UseAvalonia());
 
             var app = builder.Build();
             app.UseRouting();

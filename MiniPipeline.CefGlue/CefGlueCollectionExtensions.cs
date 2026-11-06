@@ -77,6 +77,7 @@ namespace MiniPipeline.CefGlue
             }
 
 
+            PipelineCefConfig.services = app.ApplicationServices;
             PipelineCefConfig.baseAddress = $"{PipelineCefConfig.Scheme}://{PipelineCefConfig.Host}";
             var env = app.ApplicationServices.GetService<IWebHostEnvironment>();
             PipelineCefConfig.wwwrootfolder = Helper.GetWebRootPath(env);

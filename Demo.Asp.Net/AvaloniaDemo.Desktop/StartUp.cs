@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MiniPipeline.Core;
+using Xilium.CefGlue.Avalonia;
+using Xilium.CefGlue.Common.Composition;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 namespace AvaloniaDemo.Desktop
@@ -24,6 +26,9 @@ namespace AvaloniaDemo.Desktop
 
             
             var builder = MiniPipelineBuilder.CreateBuilder();
+
+            // CefGlue.OSR shares the app container: one set of singletons, CefGlueHost resolvable anywhere.
+            builder.Services.AddCefGlue(cef => cef.UseAvalonia());
 
             builder.Services.AddLogging();
             builder.Services.AddRazorPages(options =>

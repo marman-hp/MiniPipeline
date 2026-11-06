@@ -6,6 +6,8 @@ using Xilium.CefGlue.Common.Handlers;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Avalonia;
 using Avalonia.Input;
+using Microsoft.Extensions.DependencyInjection;
+using Xilium.CefGlue.Common.Composition;
 
 
 namespace Minimal.BrowserUI;
@@ -17,7 +19,7 @@ public partial class BrowserView : UserControl
     public BrowserView()
     {
         InitializeComponent();
-        browser = new CefGlueBrowser();
+        browser = CreateBrowser();
         browser.Address = MiniPipeline.Core.PipelineCefConfig.BaseAddress;
         browser.LoadStart += OnBrowserLoadStart;
 
@@ -39,6 +41,10 @@ public partial class BrowserView : UserControl
 
     }
 
+
+    // From the app container (AddCefGlue in StartUp); a standalone browser only when there is none, e.g. the designer.
+    private static CefGlueBrowser CreateBrowser() =>
+        MiniPipeline.Core.PipelineCefConfig.Services?.GetService<CefGlueHost>()?.CreateBrowser() ?? new CefGlueBrowser();
 
     public event Action<string> TitleChanged;
 
@@ -102,7 +108,7 @@ public partial class BrowserView : UserControl
             Dispatcher.UIThread.Post(() =>
             {
                 var window = new Window();
-                var popupBrowser = new CefGlueBrowser();
+                var popupBrowser = CreateBrowser();
                 popupBrowser.Address = targetUrl;
                 window.Content = popupBrowser.Control;
                 window.Closed += (_, _) => popupBrowser.Dispose();
