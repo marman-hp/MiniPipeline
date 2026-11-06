@@ -114,7 +114,7 @@ namespace MiniPipeline.CefGlue
                 SchemeHandlerFactory = factory
             };
 
-            CefRuntimeLoader.Initialize(settings, customSchemes: new[] { custome });
+            CefRuntimeLoader.Initialize(settings, flags: cefArgs?.ToArray(), customSchemes: new[] { custome });
         }
 
         public static void CefShutdown(this IApplicationBuilder app)

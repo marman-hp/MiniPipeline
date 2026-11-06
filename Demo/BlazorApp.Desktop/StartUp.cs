@@ -32,12 +32,16 @@ namespace BlazorApp.Desktop
 
             builder.Environment.EnvironmentName = Environments.Development;
          
-            builder.Services.Configure<PipelineSocketOptions>(config =>
+            // WebSocket transport needs the TCP listener (and a certificate for wss); long polling runs on the scheme handler alone.
+            if (!PipelineCefConfig.UseBlazorLongPollingTransport)
             {
-                config.UseSsl = true;
-                config.PfxPath = @"yourpfxfile"; 
-                config.Password = "1234";
-            }).AddSocketPipeline();
+                builder.Services.Configure<PipelineSocketOptions>(config =>
+                {
+                    config.UseSsl = true;
+                    config.PfxPath = @"yourpfxfile"; 
+                    config.Password = "1234";
+                }).AddSocketPipeline();
+            }
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddControllers();

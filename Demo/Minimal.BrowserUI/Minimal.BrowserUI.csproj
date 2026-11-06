@@ -20,5 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\MiniPipeline\MiniPipeline.Core.csproj" />
+    <ProjectReference Include="..\..\MiniPipeline.CefGlue\MiniPipeline.CefGlue.csproj" />
   </ItemGroup>
 </Project>

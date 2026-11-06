@@ -19,6 +19,53 @@
     </None>
   </ItemGroup>
 
+  <!--
+    Blazor: since .NET 9 _framework/blazor.web.js is a static web asset from Microsoft.AspNetCore.App.Internal.Assets
+    (pulled in by RequiresAspNetWebAssets=true). That package only registers it for OutputType Exe under the Web SDK;
+    a desktop app is a WinExe on the Razor SDK (no console window), so register it here the same way.
+  -->
+  <PropertyGroup Condition="'$(RequiresAspNetWebAssets)' == 'true' and '$(OutputType)' == 'WinExe'">
+    <ResolveStaticWebAssetsInputsDependsOn>
+      $(ResolveStaticWebAssetsInputsDependsOn);
+      _MiniPipelineAddBlazorFrameworkAssets;
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
+  <Target Name="_MiniPipelineAddBlazorFrameworkAssets" Condition="'$(BlazorFrameworkStaticWebAssetRoot)' != ''">
+    <ItemGroup>
+      <_MiniPipelineFrameworkAssetCandidate Include="$(BlazorFrameworkStaticWebAssetRoot)\blazor.web.js" RelativePath="_framework/blazor.web.js" />
+      <_MiniPipelineFrameworkAssetCandidate Include="$(BlazorFrameworkStaticWebAssetRoot)\blazor.server.js" RelativePath="_framework/blazor.server.js" />
+      <_MiniPipelineFrameworkAssetCandidate Remove="@(_MiniPipelineFrameworkAssetCandidate)" Condition="!Exists('%(Identity)')" />
+    </ItemGroup>
+
+    <DefineStaticWebAssets
+      Condition="'@(_MiniPipelineFrameworkAssetCandidate)' != ''"
+      CandidateAssets="@(_MiniPipelineFrameworkAssetCandidate)"
+      ContentRoot="$(BlazorFrameworkStaticWebAssetRoot)"
+      SourceId="$(PackageId)"
+      SourceType="Discovered"
+      AssetKind="All"
+      AssetMode="CurrentProject"
+      AssetRole="Primary"
+      FingerprintCandidates="true"
+      BasePath="$(StaticWebAssetBasePath)">
+      <Output TaskParameter="Assets" ItemName="_MiniPipelineFrameworkAsset" />
+    </DefineStaticWebAssets>
+
+    <DefineStaticWebAssetEndpoints
+      Condition="'@(_MiniPipelineFrameworkAsset)' != ''"
+      CandidateAssets="@(_MiniPipelineFrameworkAsset)"
+      ExistingEndpoints=""
+      ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
+      <Output TaskParameter="Endpoints" ItemName="_MiniPipelineFrameworkEndpoint" />
+    </DefineStaticWebAssetEndpoints>
+
+    <ItemGroup>
+      <StaticWebAsset Include="@(_MiniPipelineFrameworkAsset)" />
+      <StaticWebAssetEndpoint Include="@(_MiniPipelineFrameworkEndpoint)" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="WarnMissingCefRuntime" BeforeTargets="Build" Condition="'$(CopyCefRuntime)' == 'true' and !Exists('$(_CefRuntimeNativeDir)')">
     <Warning Text="CEF runtime not found at $(_CefRuntimeNativeDir). Run get-cef.ps1 in CefGlue.OSR, or set CefGlueOSRDir." />
   </Target>

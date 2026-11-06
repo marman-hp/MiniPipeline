@@ -2,6 +2,8 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<CopyCefRuntime>true</CopyCefRuntime>
+		<!-- Blazor needs _framework/blazor.web.js, a static web asset since .NET 9; the Web SDK adds it, the Razor SDK only with this. -->
+		<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
 		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net10.0-windows TFM, one for MacOS with net10.0-macos and one with net10.0 TFM for Linux.-->
 		<TargetFramework>net10.0</TargetFramework>

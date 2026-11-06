@@ -36,7 +36,8 @@ namespace BlazorApp.Desktop
         Directory.CreateDirectory(cachePath);
 
         //set true if run blazor with long polling transport, deafault is false, use web socket transport
-        //PipelineCefConfig.UseBlazorLongPollingTransport =true; 
+        // --longpolling: Blazor over SignalR long polling on the app:// scheme, no TCP listener or certificate.
+        PipelineCefConfig.UseBlazorLongPollingTransport = Array.IndexOf(args, "--longpolling") >= 0;
 
 
 

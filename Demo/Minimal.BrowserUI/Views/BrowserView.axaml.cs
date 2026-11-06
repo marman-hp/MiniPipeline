@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using System;
@@ -43,8 +43,13 @@ public partial class BrowserView : UserControl
 
 
     // From the app container (AddCefGlue in StartUp); a standalone browser only when there is none, e.g. the designer.
-    private static CefGlueBrowser CreateBrowser() =>
-        MiniPipeline.Core.PipelineCefConfig.Services?.GetService<CefGlueHost>()?.CreateBrowser() ?? new CefGlueBrowser();
+    private static CefGlueBrowser CreateBrowser()
+    {
+        var browser = MiniPipeline.Core.PipelineCefConfig.Services?.GetService<CefGlueHost>()?.CreateBrowser() ?? new CefGlueBrowser();
+        // Lets the app's own pages reach its WebSocket listener (Chromium's Local Network Access prompt).
+        browser.PermissionHandler = new MiniPipeline.CefGlue.PipelinePermissionHandler();
+        return browser;
+    }
 
     public event Action<string> TitleChanged;
 
